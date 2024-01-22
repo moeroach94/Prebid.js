@@ -1,0 +1,26 @@
+name: Sync Repository with Prebid
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '15 22 * * *'
+
+jobs:
+  merge:
+    name: Merge
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.MOG_GITHUB_AUTHOR_TOKEN }}
+          fetch-depth: 0
+      - name: Sync With Prebid
+        run: |
+          git remote add prebid https://github.com/prebid/Prebid.js.git 
+          git fetch prebid master
+          git merge prebid/master
+          git push
+          git checkout experian-sandbox
+          git merge master
+          git push
